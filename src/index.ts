@@ -47,9 +47,7 @@ function toHaveBeenEnqueuedWith(job: BaseJob, payload: any) {
   const pass = jobCalls.some((call: any[]) => {
     const [_jobName, _queue, jobPayload] = call
 
-    if (jobPayload === payload) return true
-
-    if (typeof jobPayload === 'object' && typeof payload === 'object') return this.utils.stringify(jobPayload) === this.utils.stringify(payload)
+    return this.equals(jobPayload, payload)
   })
 
   if (pass) {
