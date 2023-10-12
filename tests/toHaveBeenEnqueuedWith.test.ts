@@ -2,7 +2,7 @@ import { Worker } from '@universal-packages/background-jobs'
 import { sleep } from '@universal-packages/time-measurer'
 import stripAnsi from 'strip-ansi'
 
-import '../src/globals'
+import '../src'
 import ExcellentJob from './__fixtures__/Excellent.job'
 import GoodJob from './__fixtures__/Good.job'
 
