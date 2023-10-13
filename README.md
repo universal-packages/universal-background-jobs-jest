@@ -23,6 +23,7 @@ module.exports = {
   setupFilesAfterEnv: ['@universal-packages/background-jobs-jest']
 }
 ```
+
 ## Matchers
 
 ### toHaveBeenEnqueued
@@ -50,6 +51,12 @@ it('should enqueue MyJob with payload', async () => {
 ```
 
 ## Typescript
+
+In order for typescript to see the global types you need to reference the types somewhere in your project, normally `./src/globals.d.ts`.
+
+```ts
+/// <reference types="@universal-packages/background-jobs-jest" />
+```
 
 This library is developed in TypeScript and shipped fully typed.
 
