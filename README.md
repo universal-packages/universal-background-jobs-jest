@@ -16,12 +16,13 @@ npm install @universal-packages/background-jobs
 
 ## Setup
 
-Import this library in your `<setupTests>` file.
+Add the following to your `jest.config.js` or where you configure Jest:
 
 ```js
-import '@universal-packages/background-jobs-jest'
+module.exports = {
+  setupFilesAfterEnv: ['@universal-packages/background-jobs-jest']
+}
 ```
-
 ## Matchers
 
 ### toHaveBeenEnqueued
