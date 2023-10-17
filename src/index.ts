@@ -9,7 +9,7 @@ beforeEach(() => {
   TestQueue.mock.mockClear()
 })
 
-function toHaveBeenEnqueued(job: BaseJob) {
+function toHaveBeenEnqueued(job: BaseJob): jest.CustomMatcherResult {
   const calls = TestQueue.mock.mock.calls
 
   const pass = calls.some((call: any[]) => {
@@ -21,26 +21,25 @@ function toHaveBeenEnqueued(job: BaseJob) {
   if (pass) {
     return {
       message: () => `expected ${this.utils.printReceived(job['name'])} not to have been enqueued, bit it was`,
-      pass: true
+      pass
     }
   } else {
     return {
       message: () => {
         if (calls.length === 0) {
-          return `expected ${this.utils.printReceived(job['name'])} to have been enqueued but no enqueues were found`
+          return `expected ${this.utils.printReceived(job['name'])} to have been enqueued but no enqueues were made`
         } else {
-          return `expected ${this.utils.printReceived(job['name'])} to have been enqueued but enqueues were: ${calls
+          return `expected ${this.utils.printReceived(job['name'])} to have been enqueued but it was not\n\nEnqueues were: ${calls
             .map((call: any[]) => this.utils.printExpected(call[0]))
             .join(', ')}`
         }
       },
-
-      pass: false
+      pass
     }
   }
 }
 
-function toHaveBeenEnqueuedWith(job: BaseJob, payload: any) {
+function toHaveBeenEnqueuedWith(job: BaseJob, payload: any): jest.CustomMatcherResult {
   const calls = TestQueue.mock.mock.calls
   const jobCalls = calls.filter((call: any[]) => call[0] === job['name'])
 
@@ -52,30 +51,27 @@ function toHaveBeenEnqueuedWith(job: BaseJob, payload: any) {
 
   if (pass) {
     return {
-      message: () => `expected ${this.utils.printReceived(job['name'])} not to have been enqueued with ${this.utils.printReceived(payload)}, bit it was`,
-      pass: true
+      message: () => `expected ${this.utils.printReceived(job['name'])} not to have been enqueued with the given payload, bit it was`,
+      pass
     }
   } else {
     return {
       message: () => {
         if (jobCalls.length === 0) {
-          return `expected ${this.utils.printReceived(job['name'])} to have been enqueued with ${this.utils.printReceived(payload)} but the it was not enqueued any times`
+          return `expected ${this.utils.printReceived(job['name'])} to have been enqueued, but it was not enqueued at all`
         } else {
           const jobCallsToPrint = jobCalls
             .map((call: any[]) => {
               const [_jobName, _queue, jobPayload] = call
 
-              if (typeof jobPayload === 'object' && typeof payload === 'object') return this.utils.printExpected(this.utils.diff(payload, jobPayload))
-
-              return this.utils.printExpected(jobPayload)
+              return this.utils.diff(payload, jobPayload)
             })
             .join('\n\n')
 
-          return `expected ${this.utils.printReceived(job['name'])} to have been enqueued with ${this.utils.printReceived(payload)} but job was enqueued with:\n${jobCallsToPrint}`
+          return `expected ${this.utils.printReceived(job['name'])} to have been enqueued with the given payload but it was not\n\nEnqueue payloads were:\n${jobCallsToPrint}`
         }
       },
-
-      pass: false
+      pass
     }
   }
 }

@@ -47,7 +47,7 @@ describe('toHaveBeenEnqueued', (): void => {
       error = e
     }
 
-    expect(stripAnsi(error.message)).toEqual('expected "GoodJob" to have been enqueued but no enqueues were found')
+    expect(stripAnsi(error.message)).toEqual('expected "GoodJob" to have been enqueued but no enqueues were made')
   })
 
   it('fails and shows the if a job was not enqueued and tells which ones where', async (): Promise<void> => {
@@ -73,7 +73,7 @@ describe('toHaveBeenEnqueued', (): void => {
       error = e
     }
 
-    expect(stripAnsi(error.message)).toEqual('expected "GoodJob" to have been enqueued but enqueues were: "ExcellentJob"')
+    expect(stripAnsi(error.message)).toEqual('expected "GoodJob" to have been enqueued but it was not\n\nEnqueues were: "ExcellentJob"')
   })
 
   it('fails and shows the if a job was enqueued but it was not expected', async (): Promise<void> => {

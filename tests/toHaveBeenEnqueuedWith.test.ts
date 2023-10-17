@@ -48,7 +48,7 @@ describe('toHaveBeenEnqueuedWith', (): void => {
       error = e
     }
 
-    expect(stripAnsi(error.message)).toEqual('expected "GoodJob" to have been enqueued with {"good": true} but the it was not enqueued any times')
+    expect(stripAnsi(error.message)).toEqual('expected "GoodJob" to have been enqueued, but it was not enqueued at all')
   })
 
   it('fails and shows the if a job was not enqueued with a payload and tells which ones where', async (): Promise<void> => {
@@ -75,7 +75,7 @@ describe('toHaveBeenEnqueuedWith', (): void => {
     }
 
     expect(stripAnsi(error.message)).toEqual(
-      'expected "GoodJob" to have been enqueued with {"good": true} but job was enqueued with:\n"- Expected\n+ Received·\n  Object {\n-   \\"good\\": true,\n+   \\"excellent\\": true,\n  }"'
+      'expected "GoodJob" to have been enqueued with the given payload but it was not\n\nEnqueue payloads were:\n- Expected\n+ Received\n\n  Object {\n-   "good": true,\n+   "excellent": true,\n  }'
     )
   })
 
@@ -102,6 +102,6 @@ describe('toHaveBeenEnqueuedWith', (): void => {
       error = e
     }
 
-    expect(stripAnsi(error.message)).toEqual('expected "GoodJob" not to have been enqueued with {"good": true}, bit it was')
+    expect(stripAnsi(error.message)).toEqual('expected "GoodJob" not to have been enqueued with the given payload, bit it was')
   })
 })
