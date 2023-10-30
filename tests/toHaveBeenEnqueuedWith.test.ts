@@ -1,4 +1,4 @@
-import { Worker } from '@universal-packages/background-jobs'
+import { Jobs } from '@universal-packages/background-jobs'
 import { sleep } from '@universal-packages/time-measurer'
 import stripAnsi from 'strip-ansi'
 
@@ -8,19 +8,19 @@ import GoodJob from './__fixtures__/Good.job'
 
 describe('toHaveBeenEnqueuedWith', (): void => {
   it('asserts a job being enqueued with a payload', async (): Promise<void> => {
-    const worker = new Worker({ jobsLocation: './tests/__fixtures__', waitTimeIfEmptyRound: 0 })
+    const jobs = new Jobs({ jobsLocation: './tests/__fixtures__', waitTimeIfEmptyRound: 0 })
 
-    await worker.prepare()
-    await worker.queue.clear()
+    await jobs.prepare()
+    await jobs.queue.clear()
 
     await GoodJob.performLater({ good: true })
 
-    await worker.run()
+    await jobs.run()
 
     await sleep(200)
 
-    await worker.stop()
-    await worker.release()
+    await jobs.stop()
+    await jobs.release()
 
     expect(GoodJob).toHaveBeenEnqueuedWith({ good: true })
     expect(GoodJob).not.toHaveBeenEnqueuedWith({ good: false })
@@ -28,17 +28,17 @@ describe('toHaveBeenEnqueuedWith', (): void => {
   })
 
   it('fails and shows if a job was not enqueued with a payload', async (): Promise<void> => {
-    const worker = new Worker({ jobsLocation: './tests/__fixtures__', waitTimeIfEmptyRound: 0 })
+    const jobs = new Jobs({ jobsLocation: './tests/__fixtures__', waitTimeIfEmptyRound: 0 })
 
-    await worker.prepare()
-    await worker.queue.clear()
+    await jobs.prepare()
+    await jobs.queue.clear()
 
-    await worker.run()
+    await jobs.run()
 
     await sleep(200)
 
-    await worker.stop()
-    await worker.release()
+    await jobs.stop()
+    await jobs.release()
 
     let error: Error
 
@@ -52,19 +52,19 @@ describe('toHaveBeenEnqueuedWith', (): void => {
   })
 
   it('fails and shows the if a job was not enqueued with a payload and tells which ones where', async (): Promise<void> => {
-    const worker = new Worker({ jobsLocation: './tests/__fixtures__', waitTimeIfEmptyRound: 0 })
+    const jobs = new Jobs({ jobsLocation: './tests/__fixtures__', waitTimeIfEmptyRound: 0 })
 
-    await worker.prepare()
-    await worker.queue.clear()
+    await jobs.prepare()
+    await jobs.queue.clear()
 
     await GoodJob.performLater({ excellent: true })
 
-    await worker.run()
+    await jobs.run()
 
     await sleep(200)
 
-    await worker.stop()
-    await worker.release()
+    await jobs.stop()
+    await jobs.release()
 
     let error: Error
 
@@ -80,19 +80,19 @@ describe('toHaveBeenEnqueuedWith', (): void => {
   })
 
   it('fails and shows the if a job was enqueued with a payload but it was not expected', async (): Promise<void> => {
-    const worker = new Worker({ jobsLocation: './tests/__fixtures__', waitTimeIfEmptyRound: 0 })
+    const jobs = new Jobs({ jobsLocation: './tests/__fixtures__', waitTimeIfEmptyRound: 0 })
 
-    await worker.prepare()
-    await worker.queue.clear()
+    await jobs.prepare()
+    await jobs.queue.clear()
 
     await GoodJob.performLater({ good: true })
 
-    await worker.run()
+    await jobs.run()
 
     await sleep(200)
 
-    await worker.stop()
-    await worker.release()
+    await jobs.stop()
+    await jobs.release()
 
     let error: Error
 
