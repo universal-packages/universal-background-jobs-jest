@@ -3,19 +3,15 @@ import { BaseJob, TestQueue } from '@universal-packages/background-jobs'
 
 import './globals'
 
-TestQueue.setMock(jest.fn())
-
 beforeEach(() => {
-  TestQueue.mock.mockClear()
+  TestQueue.reset()
 })
 
 function toHaveBeenEnqueued(job: BaseJob): jest.CustomMatcherResult {
-  const calls = TestQueue.mock.mock.calls
+  const enqueueRequests = TestQueue.enqueueRequests
 
-  const pass = calls.some((call: any[]) => {
-    const [jobName] = call
-
-    return jobName === job['name']
+  const pass = enqueueRequests.some((enqueueRequest) => {
+    return enqueueRequest.item.name === job['name']
   })
 
   if (pass) {
@@ -26,11 +22,11 @@ function toHaveBeenEnqueued(job: BaseJob): jest.CustomMatcherResult {
   } else {
     return {
       message: () => {
-        if (calls.length === 0) {
+        if (enqueueRequests.length === 0) {
           return `expected ${this.utils.printReceived(job['name'])} to have been enqueued but no enqueues were made`
         } else {
-          return `expected ${this.utils.printReceived(job['name'])} to have been enqueued but it was not\n\nEnqueues were: ${calls
-            .map((call: any[]) => this.utils.printExpected(call[0]))
+          return `expected ${this.utils.printReceived(job['name'])} to have been enqueued but it was not\n\nEnqueues were: ${enqueueRequests
+            .map((enqueueRequest) => this.utils.printExpected(enqueueRequest.item.name))
             .join(', ')}`
         }
       },
@@ -40,13 +36,11 @@ function toHaveBeenEnqueued(job: BaseJob): jest.CustomMatcherResult {
 }
 
 function toHaveBeenEnqueuedWith(job: BaseJob, payload: any): jest.CustomMatcherResult {
-  const calls = TestQueue.mock.mock.calls
-  const jobCalls = calls.filter((call: any[]) => call[0] === job['name'])
+  const enqueueRequests = TestQueue.enqueueRequests
+  const jobEnqueueRequests = enqueueRequests.filter((enqueueRequest) => enqueueRequest.item.name === job['name'])
 
-  const pass = jobCalls.some((call: any[]) => {
-    const [_jobName, _queue, jobPayload] = call
-
-    return this.equals(jobPayload, payload)
+  const pass = jobEnqueueRequests.some((jobEnqueueRequest) => {
+    return this.equals(jobEnqueueRequest.item.payload, payload)
   })
 
   if (pass) {
@@ -57,14 +51,12 @@ function toHaveBeenEnqueuedWith(job: BaseJob, payload: any): jest.CustomMatcherR
   } else {
     return {
       message: () => {
-        if (jobCalls.length === 0) {
+        if (jobEnqueueRequests.length === 0) {
           return `expected ${this.utils.printReceived(job['name'])} to have been enqueued, but it was not enqueued at all`
         } else {
-          const jobCallsToPrint = jobCalls
-            .map((call: any[]) => {
-              const [_jobName, _queue, jobPayload] = call
-
-              return this.utils.diff(payload, jobPayload)
+          const jobCallsToPrint = jobEnqueueRequests
+            .map((enqueueRequest) => {
+              return this.utils.diff(payload, enqueueRequest.item.payload)
             })
             .join('\n\n')
 
